@@ -7,6 +7,8 @@ export class Auth {
 
   @Prop({ required: true })
   password: string;
+  @Prop()
+  _id: string;
 }
 
 export const AuthSchema = SchemaFactory.createForClass(Auth);
