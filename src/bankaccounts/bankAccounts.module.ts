@@ -6,6 +6,8 @@ import {
 } from 'src/schemas/BankAccounts.schema';
 import { BankAccountsController } from './bankAccounts.controller';
 import { BankaccountsService } from './bankAccounts.service';
+import { User, UserSchema } from 'src/schemas/User.schema';
+import { Auth, AuthSchema } from 'src/schemas/Auth.schema';
 
 @Module({
   imports: [
@@ -13,6 +15,14 @@ import { BankaccountsService } from './bankAccounts.service';
       {
         name: BankAccounts.name,
         schema: BankAccountsSchema,
+      },
+      {
+        name: User.name,
+        schema: UserSchema,
+      },
+      {
+        name: Auth.name,
+        schema: AuthSchema,
       },
     ]),
   ],

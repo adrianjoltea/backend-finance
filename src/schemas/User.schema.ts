@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 // import { BankAccounts } from './BankAccounts.schema';
-import { Types } from 'mongoose';
+import mongoose from 'mongoose';
+import { BankAccounts } from './BankAccounts.schema';
 
 @Schema()
 export class User {
@@ -19,18 +20,10 @@ export class User {
   @Prop({ default: new Date() })
   createdAt: Date;
 
-  // @Prop({
-  //   type: [
-  //     {
-  //       username: { type: String, required: true },
-  //       balance: { type: Number, required: true, default: 0 },
-  //     },
-  //   ],
-  //   default: [],
-  // })
-  // bankAccounts: { username: string; balance: number };
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'BankAccounts' }] })
-  bankAccounts: Types.ObjectId[];
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'BankAccounts' }],
+  })
+  bankAccounts: BankAccounts[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

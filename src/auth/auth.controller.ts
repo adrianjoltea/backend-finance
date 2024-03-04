@@ -40,6 +40,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getCurrentUser(@AuthUser() user: User) {
+    console.log(user);
     return await this.authService.getCurrentUser(user._id);
   }
 }

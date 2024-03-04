@@ -54,8 +54,9 @@ export class AuthService {
 
   async getCurrentUser(userId: string): Promise<User | null> {
     try {
-      const user = await this.userModel.findById(userId).exec();
-      console.log(user);
+      const user = (await this.userModel.findById(userId).exec()).populate(
+        'bankAccounts',
+      );
       return user;
     } catch (err) {
       console.error(err);
