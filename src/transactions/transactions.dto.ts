@@ -8,4 +8,8 @@ export class TransactionsDto {
   @IsString()
   @IsNotEmpty()
   description: string;
+
+  @IsString()
+  @IsNotEmpty()
+  bankAccountId: string;
 }

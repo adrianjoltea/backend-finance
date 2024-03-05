@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
@@ -10,19 +10,14 @@ export class TransactionsController {
   constructor(private transactionService: TransactionsService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Post('transaction/:id')
+  @Post('transaction')
   async transaction(
     @AuthUser() user: User,
     @Body()
     transactionDto: TransactionsDto,
-    @Param('id') id: string,
   ) {
     const userId = user._id;
-    return await this.transactionService.transaction(
-      userId,
-      id,
-      transactionDto,
-    );
+    return await this.transactionService.transaction(userId, transactionDto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -30,5 +25,12 @@ export class TransactionsController {
   async getTransactions(@AuthUser() user: User) {
     const userId = user._id;
     return await this.transactionService.getTransactions(userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('delete')
+  async deleteTransactions(@AuthUser() user: User) {
+    const userId = user._id;
+    return await this.transactionService.deleteTransactions(userId);
   }
 }

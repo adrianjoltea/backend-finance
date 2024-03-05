@@ -6,6 +6,9 @@ export class Transactions {
   amount: number;
   @Prop({ required: true })
   description: string;
+
+  @Prop({ default: new Date() })
+  createdAt: Date;
 }
 
 export const TransactionsSchema = SchemaFactory.createForClass(Transactions);

@@ -17,14 +17,12 @@ export class TransactionsService {
     private bankAccountsModel: Model<BankAccounts>,
   ) {}
 
-  async transaction(
-    userId: string,
-    bankAccoundId: string,
-    transactionDto: TransactionsDto,
-  ) {
+  async transaction(userId: string, transactionDto: TransactionsDto) {
     const findUser = await this.userModel.findById(userId);
     if (!findUser) throw new HttpException('User not found', 404);
-    const bankAccount = await this.bankAccountsModel.findById(bankAccoundId);
+    const bankAccount = await this.bankAccountsModel.findById(
+      transactionDto.bankAccountId,
+    );
     if (!bankAccount) throw new HttpException('Bank account not found', 404);
 
     const isDeposit = transactionDto.amount > 0;
@@ -38,7 +36,7 @@ export class TransactionsService {
     }
 
     await this.bankAccountsModel.findByIdAndUpdate(
-      bankAccoundId,
+      transactionDto.bankAccountId,
       {
         balance: newBalance,
       },
@@ -64,5 +62,15 @@ export class TransactionsService {
       .findById(userId)
       .populate('transactions');
     return transactions;
+  }
+  async deleteTransactions(userId: string) {
+    const findUser = await this.userModel.findById(userId);
+    if (!findUser) throw new HttpException('User not found', 404);
+
+    await this.userModel.findByIdAndUpdate(userId, {
+      $set: { transactions: [] },
+    });
+
+    return { message: 'User transactions deleted successfully' };
   }
 }
