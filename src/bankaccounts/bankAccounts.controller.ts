@@ -66,4 +66,15 @@ export class BankAccountsController {
     if (!updatedBankAccount) throw new HttpException('User Not Found', 404);
     return updatedBankAccount;
   }
+
+  // @UseGuards(JwtAuthGuard)
+  // @Post('deposit/:id')
+  // async deposit(
+  //   @Param('id') id: string,
+  //   @Body() trasactionDto: TransactionsDto,
+  // ) {
+  //   const isValid = mongoose.Types.ObjectId.isValid(id);
+  //   if (!isValid) throw new HttpException('Invalid Id', 400);
+  //   return await this.bankAccountsService.depositBalance(id, trasactionDto);
+  // }
 }

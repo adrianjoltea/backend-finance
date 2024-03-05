@@ -50,4 +50,24 @@ export class BankaccountsService {
       new: true,
     });
   }
+  // async depositBalance(id: string, transactionDto: TransactionsDto) {
+  //   const bankAccount = await this.bankAccountsModel.findById(id);
+  //   const newTransaction = bankAccount.transactions;
+  //   console.log(newTransaction);
+  //   // const newTransaction = new this.bankAccountsModel({
+  //   //   ...transactionDto,
+  //   //   id: id,
+  //   // });
+  //   // const savedTransaction = await newTransaction.save();
+  //   // console.log(savedTransaction);
+  //   // await bankAccount.updateOne({
+  //   //   $push: {
+  //   //     transactions: {
+  //   //       amount: transactionDto.amount,
+  //   //       description: transactionDto.description,
+  //   //     },
+  //   //   },
+  //   // });
+  //   // return savedTransaction;
+  // }
 }
