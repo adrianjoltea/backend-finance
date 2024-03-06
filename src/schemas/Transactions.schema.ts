@@ -9,6 +9,12 @@ export class Transactions {
 
   @Prop({ default: new Date() })
   createdAt: Date;
+
+  @Prop({ default: new Date().getTime() })
+  createdAtMM: number;
+
+  @Prop()
+  userId: string;
 }
 
 export const TransactionsSchema = SchemaFactory.createForClass(Transactions);

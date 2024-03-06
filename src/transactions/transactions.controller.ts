@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
@@ -32,5 +41,15 @@ export class TransactionsController {
   async deleteTransactions(@AuthUser() user: User) {
     const userId = user._id;
     return await this.transactionService.deleteTransactions(userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/past-transactions/:days')
+  async getPastTransactions(
+    @AuthUser() user: User,
+    @Param('days', ParseIntPipe) days: number,
+  ) {
+    const userId = user._id;
+    return await this.transactionService.getPastTransactions(userId, days);
   }
 }

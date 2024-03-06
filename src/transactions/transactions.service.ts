@@ -46,6 +46,7 @@ export class TransactionsService {
     const newDeposit = new this.transactionModel({
       ...transactionDto,
       user: userId,
+      userId,
     });
     const savedDeposit = await newDeposit.save();
     await findUser.updateOne({
@@ -72,5 +73,43 @@ export class TransactionsService {
     });
 
     return { message: 'User transactions deleted successfully' };
+  }
+
+  async getPastTransactions(userId: string, days: number) {
+    const findUser = await this.userModel.findById(userId);
+    if (!findUser) throw new HttpException('User not found', 404);
+
+    const currentDate = new Date();
+
+    const startDate = new Date(currentDate);
+    startDate.setDate(startDate.getDate() - days);
+
+    const transactions = await this.transactionModel
+      .find({
+        userId,
+        createdAt: { $gte: startDate, $lt: currentDate },
+      })
+      .sort({ createdAt: 1 })
+      .exec();
+
+    const result = transactions.reduce((acc, transaction) => {
+      const dayKey = transaction.createdAt.toISOString().split('T')[0];
+      const existingDay = acc[dayKey];
+
+      if (existingDay) {
+        existingDay.income += transaction.amount > 0 ? transaction.amount : 0;
+        existingDay.expense += transaction.amount < 0 ? -transaction.amount : 0;
+      } else {
+        acc[dayKey] = {
+          day: transaction.createdAt.toISOString().split('T')[0],
+          income: transaction.amount > 0 ? transaction.amount : 0,
+          expense: transaction.amount < 0 ? -transaction.amount : 0,
+        };
+      }
+
+      return acc;
+    }, {});
+
+    return Object.values(result);
   }
 }
