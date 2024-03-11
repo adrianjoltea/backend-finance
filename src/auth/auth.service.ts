@@ -7,6 +7,8 @@ import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
 import { User } from 'src/schemas/User.schema';
 import * as bcrypt from 'bcrypt';
+import { updateUserDto } from './dto/updateUser.dto';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -44,6 +46,7 @@ export class AuthService {
 
     if (isPasswordValid) {
       const { password, ...user } = findUser;
+      console.log(password);
       const jwt = await this.jwtService.signAsync(user);
 
       return { accessToken: jwt };
@@ -62,5 +65,77 @@ export class AuthService {
       console.error(err);
       return null;
     }
+  }
+  // async updateUser(
+  //   userId: string,
+  //   { newUsername, profilePicture }: updateUserDto,
+  // ) {
+  //   console.log(newUsername, profilePicture);
+  //   const findUser = await this.userModel.findById(userId);
+  //   if (!findUser) throw new HttpException('User not found', 404);
+  //   const existingUser = await this.authModel
+  //     .findOne({ newUsername, _id: { $ne: userId } })
+  //     .exec();
+  //   if (existingUser) {
+  //     throw new HttpException(
+  //       'This username is already taken',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   }
+
+  //   await this.userModel
+  //     .findByIdAndUpdate(userId, { username: newUsername })
+  //     .exec();
+
+  //   if (profilePicture && profilePicture.buffer) {
+  //     const profilePicturePath = `uploads/${userId}_profile_picture.jpg`;
+  //     await fs.writeFile(
+  //       profilePicturePath,
+  //       profilePicture.buffer.toString('base64'),
+  //     );
+  //     console.log('ciava', profilePicture.mimetype);
+  //     await this.userModel
+  //       .findByIdAndUpdate(userId, {
+  //         profilePicture: profilePicturePath,
+  //       })
+  //       .exec();
+  //   }
+  // }
+  async updateUser(
+    userId: string,
+    { username, profilePicture }: updateUserDto,
+  ) {
+    console.log(username, profilePicture);
+
+    const findUser = await this.userModel.findById(userId);
+    if (!findUser) throw new HttpException('User not found', 404);
+
+    if (username) {
+      await this.userModel.findByIdAndUpdate(
+        userId,
+        { username },
+        { new: true },
+      );
+    }
+
+    if (profilePicture) {
+      const profilePicturePath = `${profilePicture.filename}`;
+
+      // await fs.writeFile(
+      //   profilePicturePath,
+      //   profilePicture.buffer.toString('base64'),
+      // );
+
+      console.log('ciava', profilePicture.mimetype);
+      await this.userModel
+        .findByIdAndUpdate(
+          userId,
+          { profilePicture: profilePicturePath },
+          { new: true },
+        )
+        .exec();
+    }
+
+    return this.userModel.findById(userId).populate('bankAccounts');
   }
 }

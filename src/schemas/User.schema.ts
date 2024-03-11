@@ -28,6 +28,8 @@ export class User {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Transactions' }],
   })
   transactions: Transactions[];
+  @Prop()
+  profilePicture?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

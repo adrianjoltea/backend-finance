@@ -9,6 +9,7 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { User, UserSchema } from 'src/schemas/User.schema';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   controllers: [AuthController],
@@ -24,6 +25,14 @@ import { User, UserSchema } from 'src/schemas/User.schema';
         schema: UserSchema,
       },
     ]),
+    MulterModule.register({
+      dest: './uploads',
+
+      limits: {
+        fileSize: 10 * 1024 * 1024,
+      },
+    }),
+
     JwtModule.register({
       secret: process.env.JWT_SECRET_KEY || 'defaultSecret',
       signOptions: { expiresIn: '1d' },

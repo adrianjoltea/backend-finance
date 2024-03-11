@@ -8,6 +8,10 @@ export class bankAccountDto {
   @IsNotEmpty()
   @IsNumber()
   balance: number;
+
+  @IsNotEmpty()
+  @IsString()
+  currency: string;
 }
 
 export class updateBankAccountDto {
