@@ -15,6 +15,9 @@ export class Transactions {
 
   @Prop()
   userId: string;
+
+  @Prop()
+  category: string;
 }
 
 export const TransactionsSchema = SchemaFactory.createForClass(Transactions);

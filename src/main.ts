@@ -15,7 +15,10 @@ async function bootstrap() {
     new ExpressAdapter(server),
   );
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: [
+      'http://localhost:5173',
+      'https://personal-finance-adrian.netlify.app',
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

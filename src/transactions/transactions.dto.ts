@@ -12,4 +12,8 @@ export class TransactionsDto {
   @IsString()
   @IsNotEmpty()
   bankAccountId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  category: string;
 }

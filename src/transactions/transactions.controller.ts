@@ -52,4 +52,17 @@ export class TransactionsController {
     const userId = user._id;
     return await this.transactionService.getPastTransactions(userId, days);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('generate-sample/:count')
+  async generateSampleTransactions(
+    @AuthUser() user: User,
+    @Param('count') count: number,
+  ): Promise<void> {
+    const userId = user._id;
+    return this.transactionService.generateAndInsertSampleTransactions(
+      userId,
+      count,
+    );
+  }
 }

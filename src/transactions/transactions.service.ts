@@ -112,4 +112,59 @@ export class TransactionsService {
 
     return Object.values(result);
   }
+  async generateAndInsertSampleTransactions(
+    userId: string,
+    count: number,
+  ): Promise<void> {
+    const findUser = await this.userModel.findById(userId);
+    if (!findUser) throw new HttpException('User not found', 404);
+
+    // const bankAccount = await this.bankAccountsModel.findOne({ user: userId });
+    // if (!bankAccount) throw new HttpException('Bank account not found', 404);
+
+    const categories = [
+      'job',
+      'side job',
+      'freelancing',
+      'other',
+      'miscellaneous',
+      'travel',
+      'entertainment',
+      'groceries',
+      'utilities',
+    ];
+
+    const sampleTransactions = Array.from({ length: count }, () => {
+      const isDeposit = Math.random() > 0.5;
+      const amount = isDeposit
+        ? Math.round(Math.random() * 100)
+        : -Math.round(Math.random() * 100);
+      const category =
+        categories[Math.floor(Math.random() * categories.length)];
+
+      return {
+        user: findUser,
+        userId,
+        amount,
+        description: 'Sample Transaction',
+        category,
+        createdAt: new Date(),
+      };
+    });
+
+    const insertedTransactions =
+      await this.transactionModel.insertMany(sampleTransactions);
+
+    // Extract the IDs of the inserted transactions
+    const transactionIds = insertedTransactions.map(
+      (transaction) => transaction._id,
+    );
+
+    // Push the transaction IDs into the user's transactions array
+    await findUser.updateOne({
+      $push: {
+        transactions: { $each: transactionIds },
+      },
+    });
+  }
 }

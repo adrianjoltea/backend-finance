@@ -111,6 +111,11 @@ export class AuthService {
     if (!findUser) throw new HttpException('User not found', 404);
 
     if (username) {
+      const existingUser = await this.userModel.findOne({ username });
+      if (existingUser && existingUser._id.toString() !== userId) {
+        throw new HttpException('Username already exists', 400);
+      }
+
       await this.userModel.findByIdAndUpdate(
         userId,
         { username },
