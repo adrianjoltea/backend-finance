@@ -3,6 +3,7 @@ import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BankAccountsModule } from './bankaccounts/bankAccounts.module';
 import { TransactionModule } from './transactions/transactions.module';
+import { InvestModule } from './investing/invest.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { TransactionModule } from './transactions/transactions.module';
     AuthModule,
     BankAccountsModule,
     TransactionModule,
+    InvestModule,
   ],
   controllers: [],
   providers: [],

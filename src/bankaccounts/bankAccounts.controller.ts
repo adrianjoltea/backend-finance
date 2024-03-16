@@ -43,11 +43,11 @@ export class BankAccountsController {
     return await this.bankAccountsService.getAllBankAccounts(userId);
   }
 
-  @Delete(':id')
-  async deleteBankAccount(@Param('id') id: string) {
-    const isValid = mongoose.Types.ObjectId.isValid(id);
-    if (!isValid) throw new HttpException('Invalid Id', 400);
-    const deletedAccount = await this.bankAccountsService.deleteBankAccount(id);
+  @Delete('delete')
+  async deleteBankAccount(@Body() _id: string) {
+    console.log(_id);
+    const deletedAccount =
+      await this.bankAccountsService.deleteBankAccount(_id);
     if (!deletedAccount) throw new HttpException('User Not Found', 404);
   }
 

@@ -41,8 +41,8 @@ export class BankaccountsService {
     return bankAccounts;
   }
 
-  deleteBankAccount(id: string) {
-    return this.bankAccountsModel.findByIdAndDelete(id);
+  deleteBankAccount(_id: string) {
+    return this.bankAccountsModel.findByIdAndDelete(_id);
   }
 
   updateBankAccount(id: string, updateBankAccountDto: updateBankAccountDto) {
