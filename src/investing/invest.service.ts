@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { BankAccounts } from 'src/schemas/BankAccounts.schema';
 import { Invest } from 'src/schemas/Invest.schema';
 import { User } from 'src/schemas/User.schema';
-import { investDto } from './invest.dto';
+import { createInvestitiondto, investDto } from './invest.dto';
 
 @Injectable()
 export class InvestService {
@@ -54,5 +54,19 @@ export class InvestService {
       await bankAccount.save();
       return { win: false, loses, balaceUpdate };
     }
+  }
+
+  async createInvestition(createInvestitiondto: createInvestitiondto) {
+    const newInvestition = new this.investModel({
+      ...createInvestitiondto,
+    });
+
+    return await newInvestition.save();
+  }
+  async getAllInvestitions() {
+    return await this.investModel.find().exec();
+  }
+  async deleteInvestion(_id: string) {
+    return await this.investModel.findByIdAndDelete(_id);
   }
 }
