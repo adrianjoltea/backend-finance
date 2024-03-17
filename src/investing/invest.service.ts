@@ -63,9 +63,11 @@ export class InvestService {
 
     return await newInvestition.save();
   }
+
   async getAllInvestitions() {
     return await this.investModel.find().exec();
   }
+
   async deleteInvestion(_id: string) {
     return await this.investModel.findByIdAndDelete(_id);
   }

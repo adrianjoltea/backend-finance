@@ -33,8 +33,7 @@ export class AuthService {
     });
     await newUser.save();
     const createdUser = new this.authModel({ username, password, _id: userId });
-    // if (username === createdUser.username)
-    //   throw new HttpException('this username already exists', 401);
+
     return createdUser.save();
   }
 

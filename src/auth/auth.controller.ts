@@ -57,22 +57,7 @@ export class AuthController {
     console.log(user);
     return await this.authService.getCurrentUser(user._id);
   }
-  // @Post('update-profile')
-  // @UseGuards(JwtAuthGuard)
-  // @UseInterceptors(FileInterceptor('profilePicture'))
-  // async updateUser(
-  //   @AuthUser() user: User,
-  //   @Body() newUsername: string,
-  //   @UploadedFile() profilePicture: Express.Multer.File,
-  // ) {
-  //   const userId = user._id;
-  //   console.log('ciava', profilePicture);
-  //   console.log('ciava2', newUsername);
-  //   await this.authService.updateUser(userId, {
-  //     newUsername,
-  //     profilePicture,
-  //   });
-  // }
+
   @Patch('update-profile')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(
