@@ -3,6 +3,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { BankAccounts } from './BankAccounts.schema';
 import { Transactions } from './Transactions.schema';
+import { Portofolio } from './Portofolio.schema';
 @Schema()
 export class User {
   @Prop()
@@ -28,6 +29,12 @@ export class User {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Transactions' }],
   })
   transactions: Transactions[];
+
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Portofolio' }],
+  })
+  portofolio: Portofolio;
+
   @Prop()
   profilePicture?: string;
 }

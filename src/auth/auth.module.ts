@@ -10,6 +10,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { User, UserSchema } from 'src/schemas/User.schema';
 import { MulterModule } from '@nestjs/platform-express';
+import { Portofolio, PortofolioSchema } from 'src/schemas/Portofolio.schema';
 
 @Module({
   controllers: [AuthController],
@@ -23,6 +24,10 @@ import { MulterModule } from '@nestjs/platform-express';
       {
         name: User.name,
         schema: UserSchema,
+      },
+      {
+        name: Portofolio.name,
+        schema: PortofolioSchema,
       },
     ]),
     MulterModule.register({

@@ -15,4 +15,16 @@ export class Stock {
   changePercent: number;
 }
 
+export class StockBought {
+  @Prop({ required: true })
+  quantity: number;
+
+  @Prop({ required: true })
+  purchasePrice: number;
+
+  @Prop({ required: true })
+  name: string;
+}
+
 export const StockSchema = SchemaFactory.createForClass(Stock);
+export const StockBoughtSchema = SchemaFactory.createForClass(StockBought);

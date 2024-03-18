@@ -9,8 +9,14 @@ import { User, UserSchema } from 'src/schemas/User.schema';
 import { Auth, AuthSchema } from 'src/schemas/Auth.schema';
 import { StockController } from './stock.controller';
 import { StockService } from './stock.service';
-import { Stock, StockSchema } from 'src/schemas/Stock.schema';
+import {
+  Stock,
+  StockBought,
+  StockBoughtSchema,
+  StockSchema,
+} from 'src/schemas/Stock.schema';
 import { ScheduleModule } from '@nestjs/schedule';
+import { Portofolio, PortofolioSchema } from 'src/schemas/Portofolio.schema';
 
 @Module({
   imports: [
@@ -31,6 +37,14 @@ import { ScheduleModule } from '@nestjs/schedule';
       {
         name: Stock.name,
         schema: StockSchema,
+      },
+      {
+        name: Portofolio.name,
+        schema: PortofolioSchema,
+      },
+      {
+        name: StockBought.name,
+        schema: StockBoughtSchema,
       },
     ]),
   ],

@@ -8,6 +8,7 @@ import { RegisterDto } from './dto/register.dto';
 import { User } from 'src/schemas/User.schema';
 import * as bcrypt from 'bcrypt';
 import { updateUserDto } from './dto/updateUser.dto';
+import { Portofolio } from 'src/schemas/Portofolio.schema';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +16,8 @@ export class AuthService {
     private jwtService: JwtService,
     @InjectModel(Auth.name) private authModel: Model<Auth>,
     @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(Portofolio.name)
+    private portofolioModel: Model<Portofolio>,
   ) {}
 
   async registerUser({ username, password }: RegisterDto): Promise<any> {
@@ -32,6 +35,15 @@ export class AuthService {
       username,
     });
     await newUser.save();
+    const newPortofolio = new this.portofolioModel({
+      user: username,
+    });
+    await newPortofolio.save();
+    await newUser.updateOne({
+      $push: {
+        portofolio: newPortofolio._id,
+      },
+    });
     const createdUser = new this.authModel({ username, password, _id: userId });
 
     return createdUser.save();
@@ -65,41 +77,7 @@ export class AuthService {
       return null;
     }
   }
-  // async updateUser(
-  //   userId: string,
-  //   { newUsername, profilePicture }: updateUserDto,
-  // ) {
-  //   console.log(newUsername, profilePicture);
-  //   const findUser = await this.userModel.findById(userId);
-  //   if (!findUser) throw new HttpException('User not found', 404);
-  //   const existingUser = await this.authModel
-  //     .findOne({ newUsername, _id: { $ne: userId } })
-  //     .exec();
-  //   if (existingUser) {
-  //     throw new HttpException(
-  //       'This username is already taken',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-  //   }
 
-  //   await this.userModel
-  //     .findByIdAndUpdate(userId, { username: newUsername })
-  //     .exec();
-
-  //   if (profilePicture && profilePicture.buffer) {
-  //     const profilePicturePath = `uploads/${userId}_profile_picture.jpg`;
-  //     await fs.writeFile(
-  //       profilePicturePath,
-  //       profilePicture.buffer.toString('base64'),
-  //     );
-  //     console.log('ciava', profilePicture.mimetype);
-  //     await this.userModel
-  //       .findByIdAndUpdate(userId, {
-  //         profilePicture: profilePicturePath,
-  //       })
-  //       .exec();
-  //   }
-  // }
   async updateUser(
     userId: string,
     { username, profilePicture }: updateUserDto,
@@ -124,11 +102,6 @@ export class AuthService {
 
     if (profilePicture) {
       const profilePicturePath = `${profilePicture.filename}`;
-
-      // await fs.writeFile(
-      //   profilePicturePath,
-      //   profilePicture.buffer.toString('base64'),
-      // );
 
       console.log('ciava', profilePicture.mimetype);
       await this.userModel

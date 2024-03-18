@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { BankAccounts } from 'src/schemas/BankAccounts.schema';
-import { Stock } from 'src/schemas/Stock.schema';
+import { Stock, StockBought } from 'src/schemas/Stock.schema';
 import { User } from 'src/schemas/User.schema';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { BoughtStock } from './stock.dto';
+import { Portofolio } from 'src/schemas/Portofolio.schema';
 
 @Injectable()
 export class StockService {
@@ -15,6 +17,10 @@ export class StockService {
     private userModel: Model<User>,
     @InjectModel(Stock.name)
     private stockModel: Model<Stock>,
+    @InjectModel(Portofolio.name)
+    private portofolioModel: Model<Portofolio>,
+    @InjectModel(StockBought.name)
+    private boughtStockModel: Model<StockBought>,
   ) {}
 
   async create(stockData: Stock): Promise<Stock> {
@@ -26,7 +32,29 @@ export class StockService {
     return await this.stockModel.find().exec();
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  async buyStock(userId: string, stockData: BoughtStock) {
+    const findUser = await this.userModel.findById(userId);
+    if (!findUser) throw new HttpException('User not found', 404);
+    const stock = await this.stockModel.findById(stockData._id);
+
+    const newStock = new this.boughtStockModel({
+      amount: stockData.amount,
+      boughtPrice: stock.currentValue,
+      user: userId,
+    });
+    const savedStock = await newStock.save();
+    const userPortofolio = (await this.userModel.findById(userId)).portofolio;
+
+    findUser.updateOne({
+      $push: {
+        portofolio: savedStock._id,
+      },
+    });
+
+    console.log(userPortofolio);
+  }
+
+  @Cron(CronExpression.EVERY_10_HOURS)
   async updateStockValues(): Promise<void> {
     const stocks = await this.stockModel.find().exec();
 
