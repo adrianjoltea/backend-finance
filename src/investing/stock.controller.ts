@@ -26,6 +26,13 @@ export class StockController {
     return this.stockService.findAll();
   }
 
+  @Get('see-stocks')
+  @UseGuards(JwtAuthGuard)
+  async getUsersStocks(@AuthUser() user: User) {
+    const userId = user._id;
+    return await this.stockService.getUsersStocks(userId);
+  }
+
   @Get('update')
   async updateStockValuesManually() {
     await this.stockService.updateStockValues();

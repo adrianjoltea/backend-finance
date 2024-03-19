@@ -36,22 +36,40 @@ export class StockService {
     const findUser = await this.userModel.findById(userId);
     if (!findUser) throw new HttpException('User not found', 404);
     const stock = await this.stockModel.findById(stockData._id);
+    if (!stock) throw new HttpException('Stock not found', 404);
 
     const newStock = new this.boughtStockModel({
       amount: stockData.amount,
       boughtPrice: stock.currentValue,
       user: userId,
     });
+    console.log(newStock);
     const savedStock = await newStock.save();
-    const userPortofolio = (await this.userModel.findById(userId)).portofolio;
+    console.log(savedStock);
+    const userPortofolioId = (await this.userModel.findById(userId)).portofolio;
+    const userPortofolio =
+      await this.portofolioModel.findById(userPortofolioId);
 
-    findUser.updateOne({
+    await userPortofolio.updateOne({
       $push: {
-        portofolio: savedStock._id,
+        stocks: savedStock._id,
       },
     });
+    return { succes: true, newStock };
+  }
 
-    console.log(userPortofolio);
+  async getUsersStocks(userId: string) {
+    const findUser = await this.userModel.findById(userId);
+    if (!findUser) throw new HttpException('User not found', 404);
+
+    const userPortfolioId = findUser.portofolio;
+
+    const userPortfolio = await this.portofolioModel
+      .findById(userPortfolioId)
+      .populate('stocks', '-__v');
+    console.log(userPortfolio);
+
+    return userPortfolio.stocks;
   }
 
   @Cron(CronExpression.EVERY_10_HOURS)
@@ -72,7 +90,7 @@ export class StockService {
       console.log(fluctuationPercentage);
       const newStockValue = stock.currentValue * (1 + fluctuationPercentage);
       const minValue = 0;
-      const updatedValue = Math.max(minValue, newStockValue);
+      const updatedValue = Math.max(minValue, +newStockValue.toFixed(2));
 
       try {
         await this.stockModel
