@@ -5,7 +5,7 @@ import { BankAccounts } from 'src/schemas/BankAccounts.schema';
 import { Stock, StockBought } from 'src/schemas/Stock.schema';
 import { User } from 'src/schemas/User.schema';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { BoughtStock } from './stock.dto';
+import { BoughtStock, SellStock } from './stock.dto';
 import { Portofolio } from 'src/schemas/Portofolio.schema';
 
 @Injectable()
@@ -56,6 +56,35 @@ export class StockService {
       },
     });
     return { succes: true, newStock };
+  }
+
+  async sellStocks(userId: string, sellData: SellStock) {
+    const findUser = await this.userModel.findById(userId);
+    if (!findUser) throw new HttpException('User not found', 404);
+
+    const findStock = await this.boughtStockModel.findByIdAndDelete(
+      sellData._id,
+    );
+
+    const bankAccount = await this.bankAccountsModel.findById(sellData.cardId);
+    console.log(bankAccount);
+    const newBalance =
+      sellData.amount * sellData.sellPrice + bankAccount.balance;
+    console.log(newBalance);
+    console.log(findStock);
+
+    await this.bankAccountsModel.findByIdAndUpdate(
+      sellData.cardId,
+      {
+        balance: newBalance,
+      },
+      {
+        new: true,
+      },
+    );
+    return {
+      succes: true,
+    };
   }
 
   async getUsersStocks(userId: string) {

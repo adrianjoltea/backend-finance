@@ -17,3 +17,21 @@ export class BoughtStock {
   @IsString()
   name?: string;
 }
+
+export class SellStock {
+  @IsNotEmpty()
+  @IsNumber()
+  amount: number;
+
+  @IsString()
+  @IsNotEmpty()
+  _id: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  sellPrice: number;
+
+  @IsString()
+  @IsNotEmpty()
+  cardId: string;
+}
