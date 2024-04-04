@@ -16,6 +16,10 @@ export class BoughtStock {
   @IsNotEmpty()
   @IsString()
   name?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  cardId: string;
 }
 
 export class SellStock {

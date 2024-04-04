@@ -79,7 +79,6 @@ export class AuthController {
     @UploadedFile() profilePicture: Express.Multer.File,
   ) {
     const userId = user._id;
-
     if (profilePicture && username) {
       const updatedProfile = await this.authService.updateUser(userId, {
         profilePicture,

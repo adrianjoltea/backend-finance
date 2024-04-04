@@ -25,6 +25,12 @@ export class StockBought {
 
   @Prop({ required: true })
   user: string;
+
+  @Prop()
+  name: string;
+
+  @Prop()
+  stockId: string;
 }
 
 export const StockSchema = SchemaFactory.createForClass(Stock);

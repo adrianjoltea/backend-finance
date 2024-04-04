@@ -9,7 +9,7 @@ export class User {
   @Prop()
   _id: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   username: string;
 
   @Prop({ default: 'user' })

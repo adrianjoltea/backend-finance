@@ -38,14 +38,32 @@ export class StockService {
     const stock = await this.stockModel.findById(stockData._id);
     if (!stock) throw new HttpException('Stock not found', 404);
 
+    const bankAccount = await this.bankAccountsModel.findById(stockData.cardId);
+    console.log(bankAccount);
+    const newBalance =
+      bankAccount.balance - stockData.amount * stockData.boughtPrice;
+
+    console.log(newBalance);
     const newStock = new this.boughtStockModel({
       amount: stockData.amount,
       boughtPrice: stock.currentValue,
       user: userId,
+      stockId: stock._id,
+      name: stock.name,
     });
-    console.log(newStock);
+
+    await this.bankAccountsModel.findByIdAndUpdate(
+      stockData.cardId,
+      {
+        balance: newBalance,
+      },
+      {
+        new: true,
+      },
+    );
+
     const savedStock = await newStock.save();
-    console.log(savedStock);
+
     const userPortofolioId = (await this.userModel.findById(userId)).portofolio;
     const userPortofolio =
       await this.portofolioModel.findById(userPortofolioId);
@@ -101,7 +119,7 @@ export class StockService {
     return userPortfolio.stocks;
   }
 
-  @Cron(CronExpression.EVERY_10_HOURS)
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async updateStockValues(): Promise<void> {
     const stocks = await this.stockModel.find().exec();
 
