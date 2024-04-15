@@ -14,14 +14,7 @@ async function bootstrap() {
     AppModule,
     new ExpressAdapter(server),
   );
-  app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'https://personal-finance-adrian.netlify.app',
-    ],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-  });
+  app.enableCors();
 
   app.useStaticAssets(join(__dirname, '..', 'uploads'));
 

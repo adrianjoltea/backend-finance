@@ -119,7 +119,7 @@ export class StockService {
     return userPortfolio.stocks;
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_DAY_AT_10AM)
   async updateStockValues(): Promise<void> {
     const stocks = await this.stockModel.find().exec();
 
