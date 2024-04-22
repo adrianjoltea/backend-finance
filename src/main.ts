@@ -19,6 +19,6 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'uploads'));
 
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000);
+  await app.listen(process.env.PORT, '0.0.0.0');
 }
 bootstrap();

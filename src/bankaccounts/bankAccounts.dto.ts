@@ -12,6 +12,9 @@ export class bankAccountDto {
   @IsNotEmpty()
   @IsString()
   currency: string;
+
+  firstColor: string;
+  secondColor: string;
 }
 
 export class updateBankAccountDto {
