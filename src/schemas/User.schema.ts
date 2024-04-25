@@ -13,10 +13,7 @@ export class User {
   username: string;
 
   @Prop({ default: 'user' })
-  role: 'user' | 'admin';
-
-  @Prop({ default: 100 })
-  balance: number;
+  role: 'user' | 'admin' | 'premium';
 
   @Prop({ default: new Date() })
   createdAt: Date;

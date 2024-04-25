@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { Model } from 'mongoose';
@@ -19,10 +19,34 @@ export class BankaccountsService {
   async createBankAccount(userId: string, bankAccountDto: bankAccountDto) {
     const findUser = await this.userModel.findById(userId);
     if (!findUser) throw new HttpException('User not found', 404);
+
+    function getMaxBankAccounts(role): number {
+      switch (role) {
+        case 'admin':
+          return Number.POSITIVE_INFINITY;
+        case 'premium':
+          return 8;
+        case 'user':
+          return 5;
+        default:
+          return 1;
+      }
+    }
+
+    const maxBankAccounts = getMaxBankAccounts(findUser.role);
+
+    if (findUser.bankAccounts.length >= maxBankAccounts) {
+      throw new HttpException(
+        `User already has the maximum number of bank accounts (${maxBankAccounts})`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const newBankAccount = new this.bankAccountsModel({
       ...bankAccountDto,
       user: userId,
     });
+
     const savedBankAccount = await newBankAccount.save();
     await findUser.updateOne({
       $push: {

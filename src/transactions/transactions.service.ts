@@ -155,12 +155,10 @@ export class TransactionsService {
     const insertedTransactions =
       await this.transactionModel.insertMany(sampleTransactions);
 
-    // Extract the IDs of the inserted transactions
     const transactionIds = insertedTransactions.map(
       (transaction) => transaction._id,
     );
 
-    // Push the transaction IDs into the user's transactions array
     await findUser.updateOne({
       $push: {
         transactions: { $each: transactionIds },

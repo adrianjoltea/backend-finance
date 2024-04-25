@@ -28,6 +28,7 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
     const userId = crypto.randomUUID();
 
     const newUser = new this.userModel({
