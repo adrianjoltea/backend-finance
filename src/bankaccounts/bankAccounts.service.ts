@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { BankAccounts } from 'src/schemas/BankAccounts.schema';
 import { bankAccountDto, updateBankAccountDto } from './bankAccounts.dto';
 import { User } from 'src/schemas/User.schema';
+import getMaximumCount from 'src/utils/getMaximumCount';
 
 @Injectable()
 export class BankaccountsService {
@@ -20,20 +21,7 @@ export class BankaccountsService {
     const findUser = await this.userModel.findById(userId);
     if (!findUser) throw new HttpException('User not found', 404);
 
-    function getMaxBankAccounts(role): number {
-      switch (role) {
-        case 'admin':
-          return Number.POSITIVE_INFINITY;
-        case 'premium':
-          return 8;
-        case 'user':
-          return 5;
-        default:
-          return 1;
-      }
-    }
-
-    const maxBankAccounts = getMaxBankAccounts(findUser.role);
+    const maxBankAccounts = getMaximumCount(findUser.role, 8, 5, 1);
 
     if (findUser.bankAccounts.length >= maxBankAccounts) {
       throw new HttpException(

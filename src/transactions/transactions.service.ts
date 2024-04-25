@@ -5,6 +5,7 @@ import { Transactions } from 'src/schemas/Transactions.schema';
 import { TransactionsDto } from './transactions.dto';
 import { User } from 'src/schemas/User.schema';
 import { BankAccounts } from 'src/schemas/BankAccounts.schema';
+import getMaximumCount from 'src/utils/getMaximumCount';
 
 @Injectable()
 export class TransactionsService {
@@ -26,6 +27,23 @@ export class TransactionsService {
     if (!bankAccount) throw new HttpException('Bank account not found', 404);
 
     const isDeposit = transactionDto.amount > 0;
+
+    const currentDate = new Date();
+    const startDate = new Date(currentDate);
+    startDate.setHours(0, 0, 0, 0);
+    const endDate = new Date(currentDate);
+    endDate.setHours(23, 59, 59, 999);
+
+    const dailyTransactionsCount = await this.transactionModel.countDocuments({
+      userId,
+      createdAt: { $gte: startDate, $lte: endDate },
+    });
+
+    const dailyTransactionLimit = getMaximumCount(findUser.role, 15, 10, 1);
+
+    if (dailyTransactionsCount >= dailyTransactionLimit) {
+      throw new HttpException('Daily transaction limit exceeded', 400);
+    }
 
     const newBalance = isDeposit
       ? bankAccount.balance + transactionDto.amount
