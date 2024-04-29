@@ -21,6 +21,7 @@ export class BankaccountsService {
     const findUser = await this.userModel.findById(userId);
     if (!findUser) throw new HttpException('User not found', 404);
 
+    console.log(findUser);
     const maxBankAccounts = getMaximumCount(findUser.role, 8, 5, 1);
 
     if (findUser.bankAccounts.length >= maxBankAccounts) {

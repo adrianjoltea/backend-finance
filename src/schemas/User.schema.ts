@@ -22,6 +22,7 @@ export class User {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'BankAccounts' }],
   })
   bankAccounts: BankAccounts[];
+
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Transactions' }],
   })
